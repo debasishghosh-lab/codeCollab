@@ -1,0 +1,380 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1,h2,h3 { color:#fff; }
+button { cursor:pointer; border:none; padding:10px 18px; border-radius:10px; font-weight:600; transition: all 0.3s ease; }
+button:hover { transform: scale(1.05); background: #38bdf8; }
+
+.join-container { display:flex; justify-content:center; align-items:center; height:100vh; }
+.join-form { background:#1e293b; padding:40px 50px; border-radius:20px; box-shadow:0 0 20px rgba(56,189,248,0.4); text-align:center; width:350px; }
+.join-form input { width:100%; margin:10px 0; padding:12px; border-radius:10px; border:none; background:#334155; color:white; font-size:15px; }
+.join-form input:focus { outline:2px solid #38bdf8; }
+.join-form button { background:#38bdf8; color:#0f172a; font-weight:bold; margin-top:15px; width:100%; }
+.editor-wrapper, .file-panel { height:100%; display:flex; flex-direction:column; }
+.file-panel { gap:10px; }
+.file-share-btn { background:#4caf50; color:white; padding:10px; border-radius:8px; cursor:pointer; width:100%; border:none; transition:0.2s; }
+.file-share-btn:hover { background:#43a047; }
+
+/* Popups */
+.popup { position:fixed; top:20px; right:20px; background:#22c55e; color:white; padding:15px 25px; border-radius:10px; font-weight:600; box-shadow:0 0 15px rgba(34,197,94,0.5); z-index:999; }
+
+/* Animations */
+.animate-fadein { animation: fadein 0.5s ease; }
+@keyframes fadein { from {opacity:0; transform:scale(0.9);} to {opacity:1; transform:scale(1);} }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .editor-container { flex-direction:column; }
+  .sidebar { width:100%; flex-direction:row; flex-wrap:wrap; border-right:none; border-bottom:2px solid #38bdf8; padding:10px; }
+  .tab-toggle { flex-direction:row; gap:5px; }
+  .editor-wrapper, .file-panel { height:50vh; }
+
+}
+
+@media (max-width: 768px) {
+  .sidebar { position:absolute; top:0; left:0; height:100vh; transform:translateX(-100%); transition: transform 0.3s ease; }
+  .sidebar.open { transform:translateX(0); }
+  .sidebar-toggle { position:fixed; top:10px; left:10px; z-index:1000; width:45px; height:45px; font-size:18px; }
+  .editor-wrapper, .file-panel { height:40vh; }
+}
+
+@media (max-width: 480px) {
+  .join-form { padding:30px 20px; }
+  .editor-wrapper, .file-panel { height:35vh; }
+  .tab-toggle button { font-size:14px; padding:6px 10px; }
+  .language-selector { font-size:14px; padding:6px; }
+  .leave-button { font-size:14px; padding:8px; }
+}
+
+
+/* Layout */
+/* Layout */
+.editor-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar Base */
+.sidebar {
+  background: #1e293b;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-right: 2px solid #38bdf8;
+  transition: all 0.3s ease;
+  z-index: 999;
+  width: 260px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Closed State Desktop */
+.sidebar.closed {
+  width: 50px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* Mobile Mode Sidebar (Overlay) */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    bottom: 0;
+    width: 260px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar.closed {
+    left: -260px;
+  }
+}
+
+/* Toggle Button Desktop */
+.sidebar-toggle {
+  background: #334155;
+  color: white;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+/* Mobile floating toggle button */
+.mobile-menu-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    background: #0ea5e9;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 18px;
+    border: none;
+  }
+
+  .sidebar-toggle {
+    display: none !important;
+  }
+}
+
+/* Overlay when sidebar open */
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 500;
+  }
+}
+
+/* Sidebar Inner UI */
+.room-info {
+  margin-bottom: 15px;
+}
+
+.copy-button {
+  background: #0ea5e9;
+  color: white;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.copy-success {
+  color: #22c55e;
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+/* Tabs */
+.tab-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tab-toggle button {
+  background: #334155;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.tab-toggle button.active-tab,
+.tab-toggle button:hover {
+  background: #0ea5e9;
+}
+
+/* User List */
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.user-list li {
+  background: #334155;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  transition: all 0.3s ease;
+}
+
+.user-list li:hover {
+  background: #0ea5e9;
+}
+
+.language-selector {
+  background: #334155;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.leave-button {
+  background: #ef4444;
+  color: white;
+  margin-top: 30px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+}
+
+/* Typing */
+.typing-indicator {
+  color: #38bdf8;
+  font-style: italic;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* top bar brand */
+.topbar-brand {
+  text-align: center;
+  color: #38bdf8;
+  /* margin-bottom: 20px; */
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-bottom: 2px solid #0ea5e9;
+  padding-bottom: 12px;
+}
+
+
+
+/* Website Branding */
+.sidebar-brand {
+  text-align: center;
+  color: #38bdf8;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-bottom: 2px solid #0ea5e9;
+  padding-bottom: 12px;
+}
+
+/* Animation on hover */
+.sidebar-brand:hover {
+  color: white;
+  text-shadow: 0 0 10px #38bdf8;
+}
+
+/* Compact style when sidebar collapsed */
+.sidebar.closed .sidebar-brand {
+  font-size: 0; /* Hide text when fully closed */
+  border: none;
+  padding: 0;
+}
+
+/* Icon-like mini version when closed */
+.sidebar.closed .sidebar-brand::before {
+  content: "💻";
+  font-size: 22px;
+  display: block;
+  color: #38bdf8;
+  text-align: center;
+  margin-top: 5px;
+}
+
+
+
+/* ✅ Main area must NOT scroll, must stretch 100% height */
+.main-area {
+  flex: 1;
+  display: flex;
+  height: calc(100vh - 60px); /* account for your header */
+  overflow: hidden; /* stop scrolling so editor fills */
+  padding: 0; /* remove extra gap */
+  margin-top: 70px;
+   /* transform: translate(-8px, 40px); */
+  
+
+}
+
+/* ✅ Editor takes full remaining height */
+.editor-wrapper {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ✅ Force Monaco Editor to fill container */
+.editor-wrapper .monaco-editor,
+.editor-wrapper .monaco-editor .overflow-guard {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* ✅ File panel same height */
+.file-panel {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Optional fade animation */
+.animate-fadein {
+  animation: fadein 0.3s ease;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* 📱 Better Mobile View */
+@media (max-width: 480px) {
+
+  .join-container {
+    padding: 0 12px;
+    height: 100vh;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .join-form {
+    width: 100%;
+    max-width: 300px;
+    padding: 22px 15px;
+    margin-top: 7px; /* So button doesn't overlap with menu toggle */
+    margin-left: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(56,189,248,0.25);
+  }
+
+  .join-form h1 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .join-form input {
+    padding: 5px;
+    font-size: 14px;;
+    border-radius: 8px;
+  }
+
+  .join-form button {
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+}
+
+
+
+.sidebar{
+  transform: translate(0px, 0px);
+}
